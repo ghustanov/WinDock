@@ -154,6 +154,9 @@ feature works.
   bring an app forward when Windows permits it.
 - **Build your own dock.** Choose 4, 6, or 8 icons per page. Hold to rearrange,
   drag to an edge to move between pages, and swipe left or right to navigate.
+- **Keep it light.** Performance mode trades the glass blur, shadows and
+  animations for instant paging and flat surfaces. Phones with 2 GB or less
+  get it by default; switch it in Appearance, or open the dock with `?perf=1`.
 - **Set the mood.** Choose a background and glass style. The landscape interface
   opens to large icons; swipe up for Apps, Controls, Capture, and Appearance.
 - **Control the essentials.** Adjust volume and supported display brightness,

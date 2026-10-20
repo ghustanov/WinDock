@@ -15,7 +15,24 @@ export function normalizeLayout(value = {}) {
     showLabels: value?.showLabels === true,
     background: ["aurora", "dusk", "ember", "midnight"].includes(value?.background) ? value.background : "aurora",
     theme: ["glass", "frost", "smoke"].includes(value?.theme) ? value.theme : "glass",
+    // null is "decide for this phone"; true and false are the user's own choice.
+    performance: value?.performance === true ? true : value?.performance === false ? false : null,
   };
+}
+
+/** Phones with this much memory or less get Performance mode unless the user says otherwise. */
+export const LOW_MEMORY_GB = 2;
+
+/**
+ * Whether the dock should draw its lighter surfaces: `?perf=1` or `?perf=0`
+ * for the shell and for testing, then the stored choice, then the phone's
+ * memory. The same rule runs inline in index.html before the first paint.
+ */
+export function performanceMode(layout, { query = "", deviceMemory } = {}) {
+  const forced = /[?&]perf=([01])(?:&|$)/.exec(String(query || ""));
+  if (forced) return forced[1] === "1";
+  if (layout?.performance === true || layout?.performance === false) return layout.performance;
+  return Number.isFinite(deviceMemory) && deviceMemory <= LOW_MEMORY_GB;
 }
 
 export function pageCount(tiles, layout) {

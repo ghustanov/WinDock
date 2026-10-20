@@ -423,3 +423,28 @@ body.is-immersive .empty .button .icon { width: 36px; height: 36px; }
 @media (max-height: 450px) { .input-pad { padding-top: 8px; padding-bottom: 8px; } .input-pad[open], .input-pad__pane { gap: 7px; } .input-pad__tabs button { padding: 7px 14px; } .input-pad__status { font-size: 10px; } }
 @media (max-width: 640px) { .input-pad__tools { gap: 8px; } .signature-tools button { padding: 8px 11px; } .touchpad-toolbar { gap: 8px; left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right)); bottom: max(8px, env(safe-area-inset-bottom)); } .touchpad-toolbar button { padding-inline: 12px; font-size: 11px; } .touchpad-navigation { gap: 2px; } .touchpad-navigation button { padding: 0; width: 44px; } .mouse-buttons button { min-width: 66px; } .touchpad-hint { font-size: 10px; gap: 8px; } .pointer-options { width: 220px; } .drawer-actions { gap: 3px; } .drawer-actions button { font-size: 10px; padding-inline: 2px; } }
 @media (orientation: portrait) { .input-pad[open] { visibility: hidden; } }
+
+/* Performance mode (html.perf): the same dock without the work that makes a
+   slow phone stutter. No backdrop blur, no blurred wallpaper, no shadows,
+   instant paging, no animations, a flat touchpad glow. Surfaces stay in the
+   scene's colours, just solid. */
+html.perf .dock { scroll-behavior: auto; }
+html.perf *, html.perf *::before, html.perf *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+html.perf .wallpaper > span { display: none; }
+html.perf .wallpaper { background: radial-gradient(ellipse at 15% 0%, var(--scene-a), transparent 55%), radial-gradient(ellipse at 90% 100%, var(--scene-b), transparent 55%), var(--scene-base); }
+html.perf .wallpaper::after { background: #070f18a8; }
+html.perf .sheet, html.perf .options, html.perf .confirm, html.perf .glass-drawer, html.perf .edit-done,
+html.perf body.is-immersive .empty .button, html.perf body.is-immersive .tile.is-editing::after,
+html.perf body.is-immersive .tile--control .tile__glyph, html.perf .recording-stop, html.perf .pointer-options, html.perf .mouse-buttons,
+html.perf .sheet::backdrop, html.perf .options::backdrop, html.perf .confirm::backdrop, html.perf .glass-drawer::backdrop {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none;
+}
+html.perf .sheet, html.perf .options, html.perf .confirm, html.perf .glass-drawer, html.perf .edit-done { background: #111c22f5; }
+html.perf .sheet::backdrop, html.perf .options::backdrop, html.perf .confirm::backdrop, html.perf .glass-drawer::backdrop { background: #040a0c99; }
+html.perf body.is-immersive .tile--control .tile__glyph { background: #1a262c; }
+html.perf .app-icon img, html.perf body.is-immersive .app-icon img { filter: none; }
+html.perf .tile__label { text-shadow: none; }
+html.perf .toast { box-shadow: none; }
+html.perf .glass-style { display: none; }
+html.perf .touchpad-feedback > span::before { display: none; }
+html.perf .touchpad-feedback > span::after { background: radial-gradient(circle, #5caaff55 0, #3758b600 60%); }

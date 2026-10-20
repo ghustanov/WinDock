@@ -53,6 +53,9 @@ t.ok(appJs.includes('credentials: "same-origin"'), "api calls send the session c
 const css = read("style.css");
 t.ok(css.includes("grid-template-columns"), "the dock uses a responsive grid");
 t.ok(css.includes("100dvh"), "layout uses dynamic viewport height for mobile browsers");
+t.ok(css.includes("html.perf .dock { scroll-behavior: auto; }") && /html\.perf[^{]*\{[^}]*backdrop-filter: none/.test(css), "performance mode drops smooth paging and backdrop blur");
+t.ok(html.indexOf('classList.add("perf")') !== -1 && html.indexOf('classList.add("perf")') < html.indexOf('href="/style.css"'), "performance mode is decided inline before the stylesheet loads");
+t.ok(html.includes('id="performance"'), "the Appearance sheet has a Performance mode switch");
 t.ok(css.includes("safe-area-inset"), "layout respects device safe areas");
 
 // ---- headless rendering ----

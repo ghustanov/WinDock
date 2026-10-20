@@ -1,7 +1,7 @@
 import { renderNowPlaying, renderControlPicker, renderAppIcon, renderControls, escapeHtml } from "./dock.js";
 import { icon, controlIcon } from "./icons.js";
 import { addAppTile, addControlTile, removeTile, moveTile, toWireTiles, availableControls, tileKey } from "./tiles.js";
-import { normalizeLayout, renderPages, pageCount, moveToTile } from "./launcher.js";
+import { normalizeLayout, performanceMode, renderPages, pageCount, moveToTile } from "./launcher.js";
 import { createInputPad } from "./input-pad.js";
 import { createNowPlayingPoller } from "./now-playing.js";
 
@@ -131,7 +131,23 @@ function setConn(on) {
   $("drawer-conn").textContent = $("conn").textContent;
   paintCapture();
 }
+/** Lighter surfaces for slow phones; the inline script in index.html made the same call before first paint. */
+function syncPerformance() {
+  const on = performanceMode(layout, { query: location.search, deviceMemory: navigator.deviceMemory });
+  document.documentElement.classList.toggle("perf", on);
+  $("performance").checked = on;
+  if (on && layout.performance === null && !/[?&]perf=/.test(location.search)) {
+    try {
+      if (!localStorage.getItem("windock-perf-hint")) {
+        localStorage.setItem("windock-perf-hint", "1");
+        notify("Performance mode is on for this phone. Change it in Appearance.");
+      }
+    } catch { /* the hint is optional */ }
+  }
+  return on;
+}
 function syncLayout() {
+  syncPerformance();
   const root = document.documentElement.style;
   root.setProperty("--columns", layout.columns);
   root.setProperty("--rows", layout.rows);
@@ -183,7 +199,8 @@ function paint() {
 }
 function pageTo(page, smooth = true) {
   currentPage = Math.max(0, Math.min(pageCount(state.tiles, layout) - 1, page));
-  $("dock").scrollTo({ left: currentPage * $("dock").clientWidth, behavior: smooth ? "smooth" : "instant" });
+  const perf = document.documentElement.classList.contains("perf");
+  $("dock").scrollTo({ left: currentPage * $("dock").clientWidth, behavior: smooth && !perf ? "smooth" : "instant" });
   if (smooth) showPageHint();
 }
 function enterEditing() { if (saving) return; editing = true; paint(); }
@@ -481,6 +498,7 @@ $("controls-open").addEventListener("click", () => { $("controls-grid").innerHTM
 document.querySelectorAll("button[data-per-page]").forEach((button) => button.addEventListener("click", () => saveLayout({ perPage: Number(button.dataset.perPage) })));
 document.querySelectorAll("button[data-background]").forEach((button) => button.addEventListener("click", () => saveLayout({ background: button.dataset.background })));
 $("immersive").addEventListener("change", () => saveLayout({ immersive: $("immersive").checked }));
+$("performance").addEventListener("change", () => saveLayout({ performance: $("performance").checked }));
 $("show-labels").addEventListener("change", () => saveLayout({ showLabels: $("show-labels").checked }));
 $("glass-theme").addEventListener("change", () => saveLayout({ theme: $("glass-theme").value }));
 async function toggleFullscreen() {

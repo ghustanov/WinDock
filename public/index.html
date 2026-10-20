@@ -7,6 +7,21 @@
 <meta name="color-scheme" content="dark">
 <title>WinDock</title>
 <link rel="manifest" href="/manifest.webmanifest">
+<script>
+// Performance mode before the first paint: ?perf=1 or ?perf=0, then the stored
+// choice, then the phone's memory. launcher.js performanceMode() is the same rule.
+(function () {
+  var forced = /[?&]perf=([01])(?:&|$)/.exec(location.search);
+  var on;
+  if (forced) on = forced[1] === "1";
+  else {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem("windock-layout") || "null"); } catch (e) {}
+    on = saved && typeof saved.performance === "boolean" ? saved.performance : Number(navigator.deviceMemory) <= 2;
+  }
+  if (on) document.documentElement.classList.add("perf");
+})();
+</script>
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -143,6 +158,7 @@
       </div>
       <label class="setting-row">Immersive mode<input id="immersive" class="switch" type="checkbox" role="switch" checked></label>
       <label class="setting-row">App names<input id="show-labels" class="switch" type="checkbox" role="switch"></label>
+      <label class="setting-row">Performance mode<input id="performance" class="switch" type="checkbox" role="switch"></label>
       <p class="settings__tip">Hold to arrange. Swipe up for the drawer.</p>
     </section>
     <section class="settings__card"><h3>Background</h3>
@@ -152,7 +168,7 @@
         <button type="button" data-background="ember" aria-pressed="false"><span class="swatch swatch--ember"></span><span>Ember</span></button>
         <button type="button" data-background="midnight" aria-pressed="false"><span class="swatch swatch--midnight"></span><span>Midnight</span></button>
       </div>
-      <label class="setting-row" for="glass-theme">Glass style<select id="glass-theme"><option value="glass">Clear</option><option value="frost">Frosted</option><option value="smoke">Smoked</option></select></label>
+      <label class="setting-row glass-style" for="glass-theme">Glass style<select id="glass-theme"><option value="glass">Clear</option><option value="frost">Frosted</option><option value="smoke">Smoked</option></select></label>
       <div class="settings__utilities"><button id="fullscreen" class="button" type="button"><span data-icon="monitor"></span>Fullscreen</button><button id="refresh" class="button" type="button"><span data-icon="refresh"></span>Refresh</button></div>
       <div class="settings__utilities" id="phone-options-row" hidden><button id="phone-options" class="button" type="button"><span data-icon="sun"></span>This phone · screen &amp; sleep</button></div>
     </section>
